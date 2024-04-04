@@ -1,0 +1,401 @@
+|-------------------------------------------------------------------------|
+| This file contents information of all functions implemented for drivers |
+|_________________________________________________________________________|
+
+
+|-- GPIO -----------------------------------------------------------------|
+
+// Use logic:
+
+1)	Declare GPIO_Handle_t structure
+
+2)	Create p_GPIOx (structure of a port)from GPIO_Handle_t that is based on a certain base address
+
+	Example: 
+	GPIOA.p_GPIOx = (GPIO_Def_t*) DRV_GPIOA_BASEADDR;
+	
+3)	Configure GPIOx_PinConfig (structure of the pin of the GPIO port)
+
+	Example:
+	GPIOA.GPIOx_PinConfig.pinNumber = 10;
+	GPIOA.GPIOx_PinConfig.pinMode = DRV_GPIO_MODE_OUT;
+	GPIOA.GPIOx_PinConfig.pinOutType = DRV_GPIO_OUTTYPE_PP;
+	GPIOA.GPIOx_PinConfig.pinOutSpeed = DRV_GPIO_OUTSPEED_HIGH;
+	GPIOA.GPIOx_PinConfig.pinPuPdControl = DRV_GPIO_PUPDR_NONE;
+
+4)	Enable the peripheral clock for this port:
+	Example: 
+	GPIO_ClkControl(GPIOB.p_GPIOx, ENABLE);
+	
+5)	Initialize the GPIO_Handle_t (this will apply the settings of the pin to the corresponding registers)
+	Example:
+	GPIO_Init( &GPIOA );
+	
+6)	Feel free to make any change to GPIOx_PinConfig and apply step #5 again to 
+	modify the previous pin's settings or to configure some other pin
+
+// ------------------------------------------------------------------------
+
+
+// Functions: 
+
+ /*********************************************************************
+ * @fn						- GPIO_Init
+ *
+ * @brief					- Initializes GPIO preirpheral by utilizing pre-filled by user pinConfig.
+ *
+ * @param[GPIO_Handle_t]	- Base address of the GPIO handler
+ *
+ * @return            		- none
+ *
+ * @Note              		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_DeInit
+ *
+ * @brief					- De-initializes GPIO preirpheral
+ *
+ * @param[GPIO_Def_t]		- Base address of the GPIO port
+ *
+ * @return            		- none
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_ClkControl
+ *
+ * @brief             		- Enables or disables peripheral clock for the given GPIO port by calculating corresponding bit position in AHB1ENR and setting it to 0x1 
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ * @param[uint8_t]         	- Control type(see notes)
+ *
+ * @return            		- none
+ *
+ * @Note              		- Control type(param) = 0 / DISABLE macro => disable the clock
+ *					  		- Control type(param) = 1 / ENABLE macro => enable the clock
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_ReadInput_Pin
+ *
+ * @brief					- Returns the input data of the given GPIO port at the provided pin by shifting the needed bit value all the way to the LSB position and clearing the rest of the bits.
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ * @param[uint8_t]			- Pin Number to read data of
+ *
+ * @return[uint8_t]			- Data at the provided pin: 1 or 0 (uint8_t);
+ *
+ * @Note					- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_ReadInput_Port
+ *
+ * @brief					- Returns the input data of the given GPIO port.
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ *
+ * @return[uint16_t]		- Data of the GPIO port of all pins (uint16_t);
+ *
+ * @Note              		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_WriteOutput_Pin
+ *
+ * @brief					- Writes given data to the provided pin of the given GPIO port
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ * @param[uint8_t]         	- Pin Number to write data to
+ * @param[uint8_t]         	- Data to be written
+ *
+ * @return            		- none
+ *
+ * @Note              		- Data kind: 1 / ENABLE macro or 0 / DISABLE macro
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_WriteOutput_Port
+ *
+ * @brief					- Writes given data to the given GPIO port
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ * @param[uint16_t]			- Data to be written
+ *
+ * @return            		- none
+ *
+ * @Note              		- Data kind: 16 bits of 1s / 0s
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn      		  		- GPIO_ToggleOutput_Pin
+ *
+ * @brief             		- Flips value of the provided pin of the given GPIO port
+ *
+ * @param[GPIO_Def_t]	- Base address of the GPIO port
+ * @param[uint8_t]         	- Pin Number to toggle data of
+ *
+ * @return            		- none
+ *
+ * @Note              		- Meaning of "Flips": 0 => 1 / 1 => 0
+ */
+ 
+ 
+  /*********************************************************************
+ * @fn      		  		- GPIO_getIrqNum
+ *
+ * @brief             		- Returns corresponding to the provided pin IRQ number
+ *
+ * @param[uint8_t]    		- Pin number
+ *
+ * @return            		- IRQ number (uint8_t)
+ *
+ * @Note              		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn      		  		- GPIO_IrqInterruptConfig
+ *
+ * @brief             		- Enables or Disables IRQ number access to processor via NVIC
+ *
+ * @param[uint8_t]    		- IRQ number
+ * @param[uint8_t]         	- Control type (see notes)
+ *
+ * @return            		- none
+ *
+ * @Note              		- Control type(param) = 0 / DISABLE macro => disable the clock
+ *							- Control type(param) = 1 / ENABLE macro => enable the clock
+ */
+ 
+ 
+  /*********************************************************************
+ * @fn      		  		- GPIO_IrqPriorityConfig
+ *
+ * @brief             		- Configures IRQ priority based on arguments provided
+ *
+ * @param[uint8_t]    		- IRQ number
+ * @param[uint8_t]         	- IRQ priority
+ *
+ * @return            		- none
+ *
+ * @Note              		- IRQ priority consists of 4 bits
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- GPIO_IrqHandling
+ *
+ * @brief             		- Clears the corresponding pending register based on the pin provided
+ *
+ * @param[uint8_t]    		- Pin number
+ *
+ * @return            		- none
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ 
+ |-- SPI protocol --------------------------------------------------------|
+
+// Use logic:
+	
+	1) Fill out SPI_Config_t
+	
+	2) ... TO BE CREATED
+	
+	SSI - stores value that will overwrite the value of NSS pin as long as SSM = 1
+	SSOE - enables or disables NSS output
+
+// ------------------------------------------------------------------------
+
+
+// Functions:
+
+ /*********************************************************************
+ * @fn						- SPI_Init
+ *
+ * @brief					- Initializes SPI preirpheral by utilizing pre-filled by user SPI_Config_t.
+ *
+ * @param[SPI_Handle_t]		- Base address of the SPI handler
+ *
+ * @return            		- none
+ *
+ * @Note              		- The function assigns a new value to CR1 erasing the current 32-bit value
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_DeInit
+ *
+ * @brief					- De-initializes SPI preirpheral
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ *
+ * @return            		- none
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_SendData
+ *
+ * @brief					- Loads data byte by byte to the DR register of SPI 
+ *
+ * @param[SPI_Def_t]		- Pointer to the address of the SPI peripheral
+ * @param[p_TxBuffer]		- Pointer to a variable that holds data to be sent
+ * @param[length]			- length of that data
+ *
+ * @return            		- none
+ *
+ * @Note             		- After you send data, you must use SPI_ReceiveData before you send new data. This way overrun error is avoided
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_ReceiveData
+ *
+ * @brief					- Reads data byte by byte from the DR register of SPI 
+ *
+ * @param[SPI_Def_t]		- Pointer to the address of the SPI peripheral
+ * @param[p_RxBuffer]		- Pointer to a variable where received data will be stored
+ * @param[length]			- length of that data
+ *
+ * @return            		- none
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_SendDataIRQ
+ *
+ * @brief					- Saves buffer and data to and changes current state of SPI in SPI_Handle_t, enables corresponding interrupts on the peripheral's end 
+ *
+ * @param[SPI_Handle_t]		- Pointer to the address of the SPI handle 
+ * @param[p_TxBuffer]		- Pointer to a variable that holds data to be sent
+ * @param[length]			- length of that data
+ *
+ * @return[uint8_t]			- SPI status (custom property, no direct connection to the hardware)
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_ReceiveDataIRQ
+ *
+ * @brief					- Saves buffer and data to and changes current state of SPI in SPI_Handle_t, enables corresponding interrupts on the peripheral's end
+ *
+ * @param[SPI_Handle_t]		- Pointer to the address of the SPI handle 
+ * @param[p_RxBuffer]		- Pointer to a variable that holds data to be sent
+ * @param[length]			- length of that data
+ *
+ * @return[uint8_t]			- SPI status (custom property, no direct connection to the hardware)
+ *
+ * @Note					- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_ClkControl
+ *
+ * @brief             		- Enables or disables peripheral clock for the given SPI address
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ * @param[uint8_t]         	- Control type(see notes)
+ *
+ * @return            		- none
+ *
+ * @Note              		- Control type(param) = 0 / DISABLE macro => disable the clock
+ *					  		- Control type(param) = 1 / ENABLE macro => enable the clock
+ *							- Includes only SPI1 through SPI4 preripherals
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_SR_Status
+ *
+ * @brief					- Returns value at a specific bit position from SPI_SR register
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ * @param[uint8_t]			- Bit position to be checked
+ *
+ * @return            		- value at the bit position = 0 or 1 (uint8_t)
+ *
+ * @Note             		- none
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_PeripheralControl
+ *
+ * @brief					- Enables or Disables the SPI peripheral by changing bit-value of SPI_CR1 at SPE
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ * @param[uint8_t]			- Control type (ENABLE or DISABLE)
+ *
+ * @return            		- none
+ *
+ * @Note             		- ControlType = 1 = ENABLE; ControlType = 0 = DISABLE
+ *							- SPI peripheral doesn't work without SPI_CR1 at SPE bit = 1
+ *
+ */
+ 
+ 
+ /*********************************************************************
+ * @fn						- SPI_SSIControl
+ *
+ * @brief					- Enables or Disables the SSI of the MCU by changing bit-value of SPI_CR1 at SSI
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ * @param[uint8_t]			- Control type (ENABLE or DISABLE)
+ *
+ * @return            		- none
+ *
+ * @Note             		- ControlType = 1 = ENABLE; ControlType = 0 = DISABLE
+ *							- SSI - stores value that will overwrite the value of NSS pin as long as SSM = 1
+ *
+ */
+ 
+ /*********************************************************************
+ * @fn						- SPI_SSOEControl
+ *
+ * @brief					- Enables or Disables the SSOE of the MCU by changing bit-value of SPI_CR2 at SSOE
+ *
+ * @param[SPI_Def_t]		- Base address of the SPI peripheral
+ * @param[uint8_t]			- Control type (ENABLE or DISABLE)
+ *
+ * @return            		- none
+ *
+ * @Note             		- ControlType = 1 = ENABLE; ControlType = 0 = DISABLE
+ *							- SSOE - enables or disables NSS output
+ *
+ */
+ 
+ 
